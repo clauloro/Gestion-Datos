@@ -188,8 +188,19 @@ GROUP BY YEAR(CAST(CONVERT(DATE, Sales_Date, 103) AS DATE)),
          MONTH(CAST(CONVERT(DATE, Sales_Date, 103) AS DATE))
 ORDER BY Año DESC, Mes DESC;
 
+--- Calcula el número de productos, transacciones y productos únicos
+SELECT 
+    COUNT(*),
+    COUNT(DISTINCT [Id_Producto]) AS Numero_Productos,
+        COUNT(DISTINCT [CODE]) AS Numero_trans
+FROM [DATAEX].[001_sales]
 
+---
+SELECT
+    COUNT[(CODIGO_POSTAL)], COUNT(DISTINCT [CODIGO_POSTAL]) 
+FROM [DATAEX].[001_clientes]
 
+-- tipologia mosaic
 
 
 
