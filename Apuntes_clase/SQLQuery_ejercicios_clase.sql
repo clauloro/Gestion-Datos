@@ -205,3 +205,4 @@ FROM [DATAEX].[001_clientes]
 
 
 
+

@@ -1,0 +1,1 @@
+SELECT * FROM [DATAEX].[011_tienda];
