@@ -1,0 +1,201 @@
+Table 001_sales {
+  BASE_DATE varchar [not null]
+  CODE varchar [primary key, not null, unique]
+  Code_ varchar [not null]
+  COSTE_VENTA_NO_IMPUESTOS int [not null]
+  Customer_ID int [not null]
+  EN_GARANTIA varchar [not null]
+  EXTENSION_GARANTIA varchar [not null]
+  FIN_GARANTIA varchar [not null]
+  FORMA_PAGO_ID int [not null]
+  Id_Producto varchar [not null]
+  IMPUESTOS int [not null]
+  MANTENIMIENTO_GRATUITO int [not null]
+  MOTIVO_VENTA_ID int [not null]
+  PVP int [not null]
+  Sales_Date varchar [not null]
+  SEGURO_BATERIA_LARGO_PLAZO varchar [not null]
+  TIENDA_ID int [not null]
+}
+
+Table 002_date {
+  Anno int [not null]
+  Annomes int [not null]
+  Date varchar [primary key, not null]
+  Dia int [not null]
+  Diadelasemana int [not null]
+  Diadelesemana_desc varchar [not null]
+  Festivo varchar [not null]
+  Findesemana varchar [not null]
+  FinMes varchar [not null]
+  InicioMes varchar [not null]
+  Laboral varchar [not null]
+  Mes int [not null]
+  Mes_desc varchar [not null]
+  Week int [not null]
+}
+
+Table 003_clientes {
+  CODIGO_POSTAL varchar [ref: > 005_cp.CP]
+  Customer_ID int [primary key, not null]
+  Edad int [not null]
+  ENCUESTA_CLIENTE_ZONA_TALLER int [not null]
+  ENCUESTA_ZONA_CLIENTE_VENTA int [not null]
+  Fecha_nacimiento varchar [not null]
+  GENERO varchar
+  RENTA_MEDIA_ESTIMADA int [not null]
+  STATUS_SOCIAL varchar
+}
+
+Table 004_rev {
+  CODE varchar [primary key, not null]
+  DATE_UTIMA_REV varchar
+  DIAS_DESDE_ULTIMA_REVISION varchar
+  Km_medio_por_revision int [not null]
+  km_ultima_revision int [not null]
+  Revisiones int [not null]
+}
+
+Table 005_cp {
+  codigopostalid varchar [primary key, not null]
+  CP varchar  [ref: - "019_Mosaic".CP, unique]
+  lat int [not null]
+  lon int [not null]
+  poblacion varchar [not null]
+  provincia varchar [not null]
+}
+
+Table 006_producto {
+  CATEGORIA_ID int [not null]
+  Code_ varchar [primary key, not null]
+  Fuel_ID varchar [not null]
+  Id_Producto varchar [primary key, not null]
+  Kw int [not null]
+  Modelo varchar [not null]
+  TIPO_CARROCERIA varchar [not null]
+  TRANSMISION_ID varchar [not null]
+}
+
+Table 007_costes {
+  Costetransporte int [not null]
+  GastosMarketing int [not null]
+  Margen int [not null]
+  Margendistribuidor int [not null]
+  Modelo varchar [primary key, not null]
+}
+
+Table 008_cac {
+  CODE varchar [pk, not null]
+  DIAS_DESDE_LA_ULTIMA_ENTRADA_TALLER int [not null]
+  DIAS_EN_TALLER integer [not null]
+  QUEJA varchar [not null]
+}
+
+Table 009_motivo_venta {
+  MOTIVO_VENTA varchar [not null]
+  MOTIVO_VENTA_ID int [primary key, not null]
+}
+
+Table 010_forma_pago {
+  FORMA_PAGO varchar [not null]
+  FORMA_PAGO_GRUPO varchar [not null]
+  FORMA_PAGO_ID int [primary key, not null]
+}
+
+Table 011_tienda {
+  PROVINCIA_ID int [not null]
+  TIENDA_DESC varchar [not null]
+  TIENDA_ID int [primary key, not null]
+  ZONA_ID int [not null]
+}
+
+Table 012_provincia {
+  PROV_DESC varchar [not null]
+  PROVINCIA_ID int [primary key, not null]
+}
+
+Table 013_zona {
+  ZONA varchar [not null]
+  ZONA_ID int  [primary key, not null]
+}
+
+Table 014_categoria_producto {
+  CATEGORIA_ID int  [primary key, not null]
+  Equipamento varchar [not null]
+  Grade_ID int [not null]
+}
+
+Table 015_fuel {
+  FUEL varchar [not null]
+  Fuel_ID varchar [primary key, not null]
+}
+
+Table 016_origen_venta {
+  Origen varchar [not null]
+  Origen_Compra_ID int [primary key, not null]
+}
+
+Table 017_logist {
+  CODE varchar [primary key, not null]
+  Fue_Lead int [not null]
+  Lead_compra int [not null]
+  Logistic_date varchar [not null]
+  Origen_Compra_ID int [not null]
+  Prod_date varchar [not null]
+  Sales_Date varchar [not null]
+  t_logist_days int [not null]
+  t_prod_date int [not null]
+  t_stock_dates int [not null]
+}
+
+Table 018_edad {
+  Car_Age int [not null]
+  CODE varchar  [primary key]
+  Sales_Date varchar [not null]
+}
+
+Table 019_Mosaic {
+  A float [not null]
+  B float [not null]
+  C float [not null]
+  Check float [not null]
+  Count float
+  CP varchar [primary key, not null]
+  CP_value int [primary key, not null]
+  D float [not null]
+  E float [not null]
+  F float [not null]
+  G float [not null]
+  H float [not null]
+  I float [not null]
+  J float [not null]
+  K float [not null]
+  Max_Mosaic nvarchar [not null]
+  Max_Mosaic_G nvarchar [not null]
+  Max_Mosaic1 float [not null]
+  Max_Mosaic2 float [not null]
+  Mosaic_number float [not null]
+  PROV tinyint [not null]
+  PROV_INE nvarchar [not null]
+  Renta_Media float 
+  U float [not null]
+  U2 float [not null]
+}
+
+Ref: "011_tienda"."TIENDA_ID" < "001_sales"."TIENDA_ID"
+Ref: "012_provincia"."PROVINCIA_ID" < "011_tienda"."PROVINCIA_ID"
+Ref: "013_zona"."ZONA_ID" < "011_tienda"."ZONA_ID"
+Ref: "006_producto"."Id_Producto" < "001_sales"."Id_Producto"
+Ref: "014_categoria_producto"."CATEGORIA_ID" < "006_producto"."CATEGORIA_ID"
+Ref: "007_costes"."Modelo" < "006_producto"."Modelo"
+Ref: "015_fuel"."Fuel_ID" < "006_producto"."Fuel_ID"
+Ref: "010_forma_pago"."FORMA_PAGO_ID" < "001_sales"."FORMA_PAGO_ID"
+Ref: "009_motivo_venta"."MOTIVO_VENTA_ID" < "001_sales"."MOTIVO_VENTA_ID"
+Ref: "006_producto"."Code_" < "001_sales"."Code_"
+Ref: "003_clientes"."Customer_ID" < "001_sales"."Customer_ID"
+Ref: "016_origen_venta"."Origen_Compra_ID" < "017_logist"."Origen_Compra_ID"
+Ref: "001_sales"."CODE" - "017_logist"."CODE"
+Ref: "004_rev"."CODE" - "001_sales"."CODE"
+Ref: "002_date"."Date" < "001_sales"."Sales_Date"
+Ref: "001_sales"."CODE" - "008_cac"."CODE"
+Ref: "001_sales"."CODE" - "018_edad"."CODE"
