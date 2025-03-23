@@ -1,1 +1,2 @@
-SELECT * FROM [DATAEX].[011_tienda];
+ SELECT *  FROM [DATAEX].[011_tienda] ;
+
