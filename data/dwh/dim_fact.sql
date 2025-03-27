@@ -74,12 +74,20 @@ SELECT
     + costes.Costetransporte AS Coste_Total_Venta,  
 
         -- Identificación de ventas que generaron quejas.  
-    CASE WHEN cac.QUEJA IS NOT NULL THEN 1 ELSE 0 END AS Tasa_Quejas_Venta,
-    CASE 
-        WHEN TRY_CONVERT(INT, revisions.DIAS_DESDE_ULTIMA_REVISION) > 400 THEN 1 
-        ELSE 0 
-    END AS Churn     
-
+    CASE WHEN cac.QUEJA IS NOT NULL THEN 1 ELSE 0 END AS Tasa_Quejas_Venta,     
+        -- Tasa de Churn: Indica si la venta ha sido cancelada en los últimos 400 días (1) o no (0).
+    CASE
+            -- Caso 1: Revisión reciente o sin revisión (0-400 días) - No churn.
+        WHEN
+            TRY_CAST(REPLACE(revisions.DIAS_DESDE_ULTIMA_REVISION, '.', '') AS INT) BETWEEN 0 AND 400
+        THEN 0
+            -- Caso 2: Revisión muy antigua (>400 días) - Churn.
+        WHEN
+            TRY_CAST(REPLACE(revisions.DIAS_DESDE_ULTIMA_REVISION, '.', '') AS INT) > 400
+        THEN 1
+            -- Caso 4: Otros valores inesperados - Churn por precaución.
+        ELSE 1
+    END AS Churn
 FROM [DATAEX].[001_sales] sales  
 
 -- Enlace con la información de revisiones (*1:1*).  

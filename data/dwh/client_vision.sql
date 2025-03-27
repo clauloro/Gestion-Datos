@@ -41,41 +41,7 @@ SELECT
 
     -- 🔹 Sumatorio de leads
     COALESCE(TRY_CONVERT(INT, f.Lead_compra), 0) + 
-    COALESCE(TRY_CONVERT(INT, f.Fue_Lead), 0) AS Total_Leads,
-
-    -- 🔹 CHURN basado en tiempo desde la última revisión
-    CASE 
-        WHEN TRY_CONVERT(INT, f.DIAS_DESDE_ULTIMA_REVISION) > 400 THEN 1 
-        ELSE 0 
-    END AS Churn_Revision,
-
-    -- 🔹 CHURN basado en ausencia de entradas al taller
-    CASE 
-        WHEN f.DIAS_EN_TALLER IS NULL OR f.DIAS_EN_TALLER = 0 THEN 1 
-        ELSE 0 
-    END AS Churn_Taller,
-
-    -- 🔹 CHURN por fin de garantía
-    CASE 
-        WHEN f.FIN_GARANTIA IS NOT NULL AND f.FIN_GARANTIA < GETDATE() THEN 1
-        ELSE 0
-    END AS Churn_FinGarantia,
-
-    -- 🔹 CHURN por baja interacción (0 revisiones + pocos km)
-    CASE 
-        WHEN (COALESCE(f.Revisiones, 0) = 0 AND COALESCE(f.km_ultima_revision, 0) < 5000) THEN 1
-        ELSE 0
-    END AS Churn_BajaInteraccion,
-
-    -- 🔹 CHURN basado en falta de VAS (servicios adicionales)
-    CASE 
-        WHEN 
-            (ISNULL(f.MANTENIMIENTO_GRATUITO, '0') = '0' OR f.MANTENIMIENTO_GRATUITO IS NULL) AND
-            (ISNULL(f.SEGURO_BATERIA_LARGO_PLAZO, '0') = '0' OR f.SEGURO_BATERIA_LARGO_PLAZO IS NULL) AND
-            (ISNULL(f.EXTENSION_GARANTIA, '') = '') 
-        THEN 1
-        ELSE 0
-    END AS Churn_VAS
+    COALESCE(TRY_CONVERT(INT, f.Fue_Lead), 0) AS Total_Leads
 
 FROM [dbo].[Dim_client] AS c
 LEFT JOIN [dbo].[fact_sales] AS f 
