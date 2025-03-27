@@ -74,7 +74,11 @@ SELECT
     + costes.Costetransporte AS Coste_Total_Venta,  
 
         -- Identificación de ventas que generaron quejas.  
-    CASE WHEN cac.QUEJA IS NOT NULL THEN 1 ELSE 0 END AS Tasa_Quejas_Venta  
+    CASE WHEN cac.QUEJA IS NOT NULL THEN 1 ELSE 0 END AS Tasa_Quejas_Venta,
+    CASE 
+        WHEN TRY_CONVERT(INT, revisions.DIAS_DESDE_ULTIMA_REVISION) > 400 THEN 1 
+        ELSE 0 
+    END AS Churn     
 
 FROM [DATAEX].[001_sales] sales  
 
