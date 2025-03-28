@@ -1,19 +1,16 @@
 IF OBJECT_ID('cltv') IS NOT NULL
     DROP TABLE cltv;
 
--- Declaración de Variables.
+-- Declaración de Variables
 DECLARE
-    -- Tasa de descuento para cálculos financieros.
     @discount_rate FLOAT = 0.07,
-
-    -- Coeficientes del modelo de churn.
     @b_intercepto FLOAT,
     @b_pvp FLOAT,
     @b_edad FLOAT,
     @b_km FLOAT,
     @b_revisiones FLOAT;
 
--- Carga de Coeficientes del modelo.
+-- Cargar coeficientes del modelo de churn
 SELECT
     @b_intercepto = MAX(CASE WHEN Variable = 'Intercepto' THEN Coeficiente END),
     @b_pvp        = MAX(CASE WHEN Variable = 'PVP' THEN Coeficiente END),
@@ -22,7 +19,7 @@ SELECT
     @b_revisiones = MAX(CASE WHEN Variable = 'avg_revisiones' THEN Coeficiente END)
 FROM churn_coef;
 
--- CTE para estimar la retención por cliente.
+-- CTE para calcular retención estimada
 WITH retencion_cte AS (
     SELECT
         c.Customer_ID,
@@ -40,7 +37,7 @@ WITH retencion_cte AS (
     GROUP BY c.Customer_ID
 )
 
--- Consulta principal.
+-- Consulta principal para crear la tabla CLTV
 SELECT
     c.Customer_ID,  
     c.Edad,
@@ -59,7 +56,6 @@ SELECT
     c.Renta_Media,
     c.F2,
     c.Mosaic_number,
-    
 
     -- Leads agregados
     SUM(COALESCE(TRY_CAST(f.Lead_compra AS INT), 0) + 
@@ -69,7 +65,7 @@ SELECT
     LEAST(1, GREATEST(0, 1 - r.retencion_estimado)) AS churn_estimado,
     r.retencion_estimado,
 
-    -- CLTV (Customer Lifetime Value) para 1 a 5 años
+    -- CLTV para 1 a 5 años
     AVG(f.Margen_Eur) * (
         POWER(r.retencion_estimado, 1) / POWER(1 + @discount_rate, 1)
     ) AS CLTV_1_anio,
@@ -98,7 +94,14 @@ SELECT
         POWER(r.retencion_estimado, 3) / POWER(1 + @discount_rate, 3) +
         POWER(r.retencion_estimado, 4) / POWER(1 + @discount_rate, 4) +
         POWER(r.retencion_estimado, 5) / POWER(1 + @discount_rate, 5)
-    ) AS CLTV_5_anios
+    ) AS CLTV_5_anios,
+
+    -- Nuevas métricas
+    COUNT(DISTINCT f.Sales_Date) AS total_compras,
+    AVG(DATEDIFF(DAY, f.Prod_date, f.Sales_Date)) AS dias_produccion_venta,
+    MAX(f.Margen_Eur) AS margen_max,
+    MIN(f.Margen_Eur) AS margen_min,
+    DATEDIFF(DAY, MIN(f.Sales_Date), MAX(f.Sales_Date)) AS dias_entre_compras
 
 INTO cltv
 FROM dim_client c
@@ -123,5 +126,6 @@ GROUP BY
     c.F2,
     c.Mosaic_number,
     r.retencion_estimado;
-SELECT * FROM cltv;
 
+-- Mostrar resultados
+SELECT * FROM cltv;
