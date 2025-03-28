@@ -79,10 +79,14 @@ SELECT
     CASE
             -- Caso 1: Revisión reciente o sin revisión (0-400 días) - No churn.
         WHEN
+            revisions.DIAS_DESDE_ULTIMA_REVISION IS NOT NULL AND
+            revisions.DIAS_DESDE_ULTIMA_REVISION <> '' AND
             TRY_CAST(REPLACE(revisions.DIAS_DESDE_ULTIMA_REVISION, '.', '') AS INT) BETWEEN 0 AND 400
         THEN 0
             -- Caso 2: Revisión muy antigua (>400 días) - Churn.
         WHEN
+            revisions.DIAS_DESDE_ULTIMA_REVISION IS NOT NULL AND
+            revisions.DIAS_DESDE_ULTIMA_REVISION <> '' AND
             TRY_CAST(REPLACE(revisions.DIAS_DESDE_ULTIMA_REVISION, '.', '') AS INT) > 400
         THEN 1
             -- Caso 4: Otros valores inesperados - Churn por precaución.
