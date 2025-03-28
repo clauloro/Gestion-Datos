@@ -1,3 +1,6 @@
+IF OBJECT_ID('cltv') IS NOT NULL
+    DROP TABLE cltv;
+
 -- Declaración de Variables.
 DECLARE
     -- Tasa de descuento para cálculos financieros.
@@ -56,27 +59,7 @@ SELECT
     c.Renta_Media,
     c.F2,
     c.Mosaic_number,
-
-    -- Variables de ventas
-    f.CODE,
-    f.TIENDA_ID,
-    f.Id_Producto,
-    f.DATE_ULTIMA_REVISION,
-    f.Sales_Date,
-    f.PVP,
-    f.MANTENIMIENTO_GRATUITO,
-    f.SEGURO_BATERIA_LARGO_PLAZO,
-    f.FIN_GARANTIA,
-    f.COSTE_VENTA_NO_IMPUESTOS,
-    f.IMPUESTOS,
-    f.EN_GARANTIA,
-    f.EXTENSION_GARANTIA,
-    f.Margen_Eur,
-    f.Margen_Eur_bruto,
-    f.Coste_Total_Venta,
-    f.Tasa_Quejas_Venta,
-    f.Origen,
-    f.Car_Age,
+    
 
     -- Leads agregados
     SUM(COALESCE(TRY_CAST(f.Lead_compra AS INT), 0) + 
@@ -117,6 +100,7 @@ SELECT
         POWER(r.retencion_estimado, 5) / POWER(1 + @discount_rate, 5)
     ) AS CLTV_5_anios
 
+INTO cltv
 FROM dim_client c
 LEFT JOIN fact_sales f ON c.Customer_ID = f.Customer_ID
 LEFT JOIN retencion_cte r ON c.Customer_ID = r.Customer_ID
@@ -138,25 +122,6 @@ GROUP BY
     c.Renta_Media,
     c.F2,
     c.Mosaic_number,
-    f.CODE,
-    f.TIENDA_ID,
-    f.Id_Producto,
-    f.DATE_ULTIMA_REVISION,
-    f.Sales_Date,
-    f.PVP,
-    f.MANTENIMIENTO_GRATUITO,
-    f.SEGURO_BATERIA_LARGO_PLAZO,
-    f.FIN_GARANTIA,
-    f.COSTE_VENTA_NO_IMPUESTOS,
-    f.IMPUESTOS,
-    f.EN_GARANTIA,
-    f.EXTENSION_GARANTIA,
-    f.Margen_Eur,
-    f.Margen_Eur_bruto,
-    f.Coste_Total_Venta,
-    f.Tasa_Quejas_Venta,
-    f.Origen,
-    f.Car_Age,
     r.retencion_estimado;
-
+SELECT * FROM cltv;
 
