@@ -1,16 +1,6 @@
--- VALIDACIÓN DEL NÚMERO DE CLIENTES EN LA TABLA  
--- SELECT COUNT(*) AS Num_Clients FROM [DATAEX].[003_clientes];  
+-- Esta consulta se utiliza para obtener información combinada de los clientes, su ubicación y su segmentación en el modelo Mosaic. 
+-- Se unen las tablas de clientes, códigos postales y segmentación Mosaic, y se normalizan ciertos datos para facilitar el análisis.
 
-/*  
-   CONSULTA PARA VERIFICAR LOS TIPOS DE DATOS DE LAS TABLAS INVOLUCRADAS  
-   SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE  
-   FROM INFORMATION_SCHEMA.COLUMNS  
-   WHERE TABLE_NAME IN ('003_clientes', '005_cp', '019_mosaic')  
-   AND TABLE_SCHEMA = 'DATAEX';  
-*/  
-
-
--- CONSULTA PARA UNIR INFORMACIÓN DE CLIENTES, UBICACIÓN Y SEGMENTACIÓN  
 SELECT  
     cliente.Customer_ID,  -- Identificador único del cliente (PK de 003_clientes).  
     cliente.Edad,  
@@ -54,7 +44,7 @@ FROM [DATAEX].[003_clientes] cliente
 LEFT JOIN [DATAEX].[005_cp] cp ON cliente.CODIGO_POSTAL = cp.CP  
 
 -- Unión con la tabla de segmentación Mosaic  
--- Se usa TRY_CAST para convertir codigopostalid a INT y enlazarlo con CP_value (clave en Mosaic).  
 LEFT JOIN [DATAEX].[019_mosaic] mosaic ON TRY_CAST(cp.codigopostalid AS INT) = mosaic.CP_value;  
+
 
 
